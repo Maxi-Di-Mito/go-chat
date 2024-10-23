@@ -22,9 +22,9 @@ func StartClient() {
 	toPrint = make(chan string, 20)
 	inputChannel = make(chan string)
 
-	go receiver(conn, toPrint)
+	go receiver(conn)
 	group.Add(1)
-	go printer(toPrint)
+	go printer()
 
 	go inputer()
 	go processInput(conn)
@@ -48,7 +48,7 @@ func processInput(conn net.Conn) {
 	}
 }
 
-func receiver(conn net.Conn, channel chan<- string) {
+func receiver(conn net.Conn) {
 	input := make([]byte, 1024)
 	for {
 		len, err := conn.Read(input)
@@ -59,13 +59,13 @@ func receiver(conn net.Conn, channel chan<- string) {
 			continue
 		}
 
-		channel <- string(input)
+		toPrint <- string(input)
 	}
 }
 
-func printer(channel <-chan string) {
+func printer() {
 	for {
-		data, ok := <-channel
+		data, ok := <-toPrint
 		if !ok {
 			break
 		}

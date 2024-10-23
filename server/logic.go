@@ -3,11 +3,16 @@ package server
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 func JoinClientToRoom(roomId string, client *Client) {
 	var roomObject *Room
-	fmt.Println(roomId)
+
+	roomId = strings.TrimSpace(roomId)
+
+	diff := strings.Compare(roomId, "0")
+	fmt.Println("DIFF", diff)
 	if roomId == "0" {
 		fmt.Println("creating new room")
 		channel := make(chan ProcessorData, 10)

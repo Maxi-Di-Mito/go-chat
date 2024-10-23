@@ -64,7 +64,7 @@ func receiver(client *Client) {
 			fmt.Println("ERROR", err)
 			break
 		}
-		msg := strings.TrimSuffix(string(in), "\n")
+		msg := strings.TrimSpace(strings.ReplaceAll(string(in), "\n", ""))
 
 		fmt.Println("FROM: ", client.id, "MESSAGE", msg)
 
