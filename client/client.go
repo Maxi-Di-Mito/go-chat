@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -36,15 +37,34 @@ func inputer() {
 	reader := bufio.NewReader(os.Stdin)
 	for {
 		input, _ := reader.ReadString('\n')
-		inputChannel <- input
+		inputChannel <- strings.TrimSpace(input)
 	}
 }
 
 func processInput(conn net.Conn) {
 	for {
 		input := <-inputChannel
+		if inputIsAction(input) {
+			makeAction(input)
+		} else {
+			conn.Write([]byte(input))
+		}
+	}
+}
 
-		conn.Write([]byte(input))
+func inputIsAction(input string) bool {
+	if input == "EXIT" {
+		return true
+	}
+	return false
+}
+
+func makeAction(action string) {
+	toPrint <- fmt.Sprintf("Executing action: %s", action)
+	if action == "EXIT" {
+		close(toPrint)
+		close(inputChannel)
+		group.Done()
 	}
 }
 
@@ -59,7 +79,7 @@ func receiver(conn net.Conn) {
 			continue
 		}
 
-		toPrint <- string(input)
+		toPrint <- string(input[:len])
 	}
 }
 
@@ -69,7 +89,7 @@ func printer() {
 		if !ok {
 			break
 		}
-		fmt.Println("==============================\n", data)
+		fmt.Println("===============================================================\n", data)
 	}
 	group.Done()
 }

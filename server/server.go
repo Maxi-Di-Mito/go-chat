@@ -4,18 +4,11 @@ import (
 	"fmt"
 	"net"
 	"strings"
-	"sync"
 
-	"github.com/Maxi-Di-Mito/go-routines/client"
-	"github.com/Maxi-Di-Mito/go-routines/common/messages"
-	"github.com/Maxi-Di-Mito/go-routines/utils"
+	"github.com/google/uuid"
 )
 
-var roninClients []Client
-
-var Rooms []Room
-
-var group sync.WaitGroup
+var clientList = []*Client{}
 
 func StartServer() {
 	listener, err := net.Listen("tcp", ":8080")
@@ -23,71 +16,53 @@ func StartServer() {
 		panic(err)
 	}
 	defer listener.Close()
-
-	connectionListener(listener)
-	group.Wait()
+	go broadCaster()
+	listenerLoop(listener)
 }
 
-func connectionListener(listener net.Listener) {
+func listenerLoop(listener net.Listener) {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("ERROR LISTENER", err)
 			continue
 		}
+		client := &Client{
+			conn: conn,
+			id:   uuid.NewString(),
+		}
 
-		client := NewRoningClient(conn)
-		group.Add(1)
-		go receiver(client)
-
-		mess := messages.CreateMessageListRooms(utils.Map(Rooms, func(r Room) string {
-			return r.Id
-		}))
-
-		conn.Write([]byte(mess))
+		go clientLoop(client)
 	}
 }
 
-func NewRoningClient(conn net.Conn) *Client {
-	newClient := InitClient("noRoom", conn)
-	roninClients = append(roninClients, *newClient)
-	return newClient
-}
+var broadCastChannel = make(chan string, 100)
 
-func receiver(client *Client) {
+func clientLoop(client *Client) {
 	defer client.conn.Close()
-
+	clientList = append(clientList, client)
 	in := make([]byte, 1024)
 	for {
-		_, err := client.conn.Read(in)
+		n, err := client.conn.Read(in)
 		if err != nil {
-			fmt.Println("ERROR", err)
+			fmt.Println("ERROR WITH CLIENT", err)
 			break
 		}
-		msg := strings.TrimSpace(strings.ReplaceAll(string(in), "\n", ""))
+		fmt.Println("THE IN", in, "\n the N", n)
+		cutted := in[:n]
+		fmt.Println("CUTTED", cutted)
+		msg := strings.TrimSpace(string(in[:n]))
+		fmt.Println("MSG ", msg)
 
-		fmt.Println("FROM: ", client.id, "MESSAGE", msg)
-
-		if client.ronin {
-			JoinClientToRoom(msg, client)
-		} else {
-			parseMessage(client, string(in))
-		}
-
+		broadCastChannel <- fmt.Sprintf("%s :\n%s", client.id, msg)
 	}
-	group.Done()
 }
 
-func parseMessage(from *Client, msg string) {
-	msgLines := strings.Split(msg, "\n")
-
-	header := msgLines[0]
-
-	switch header {
-	case client.MESSAGE_SEND_MESSAGE:
-		deliverNewMessage(strings.Join(msgLines[1:], ""), from)
-
-	default:
-		fmt.Println("\n=============unknown message\n", msg, "\n=============")
+func broadCaster() {
+	for {
+		msg := <-broadCastChannel
+		for _, client := range clientList {
+			client.conn.Write([]byte(msg))
+		}
 	}
 }
