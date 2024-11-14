@@ -1,18 +1,33 @@
 package main
 
-const WIDTH = 10
-const HEIGHT = 10
-
-var board = Board{
-	nodes: make([][]*Node, WIDTH),
-}
+import (
+	"fmt"
+	"os"
+)
 
 var nodeList []*Node
 
 func main() {
-	createNodeStructure()
-}
+	file, err := os.Open("map.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 
-func createNodeStructure(file) {
+	board := createNodeStructure(file)
+
+	result, err := board.Dijkstra("0-0")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("DISTANCES:\n%+v\n", result.distances)
+
+	fmt.Println("Path to 2-2")
+	path := board.getPath("2-2", result)
+
+	for _, p := range path {
+		fmt.Printf("%+v - ", p.getCoords())
+	}
 
 }
