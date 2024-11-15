@@ -14,37 +14,32 @@ func createNodeStructure(file *os.File) *Board {
 
 	var nodeList []*Node
 	mapaCoors := make(map[string]*Node)
-	isFirstLine := true
 
-	for scanner.Scan() {
+	for x := -1; scanner.Scan(); x++ {
 		line := scanner.Text()
-		if isFirstLine {
+		if x == -1 {
 			parts := strings.Split(line, "x")
 			x, _ := strconv.ParseInt(parts[0], 10, 32)
 			y, _ := strconv.ParseInt(parts[1], 10, 32)
 			board.WIDTH = int(x)
 			board.HEIGHT = int(y)
-			isFirstLine = false
 			continue
 		}
 		nodeTexts := strings.Split(line, " ")
 
-		for _, node := range nodeTexts {
-			parts := strings.Split(node, "-")
-			x, _ := strconv.ParseInt(parts[0], 10, 32)
-			y, _ := strconv.ParseInt(parts[1], 10, 32)
-			isWalkable, _ := strconv.ParseInt(parts[2], 10, 32)
+		for y, node := range nodeTexts {
+			isWalkable, _ := strconv.ParseInt(node, 10, 32)
 
 			newNode := &Node{
-				x:        int(x),
-				y:        int(y),
+				x:        x,
+				y:        y,
 				cost:     1, //TODO hardcoded cost for the momment
 				walkable: isWalkable == 1,
 				edges:    make(map[*Node]int),
 			}
 
 			nodeList = append(nodeList, newNode)
-			mapaCoors[newNode.getCoords()] = newNode
+			mapaCoors[newNode.getKey()] = newNode
 		}
 
 	}

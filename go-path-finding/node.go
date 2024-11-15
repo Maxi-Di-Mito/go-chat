@@ -16,7 +16,7 @@ type Node struct {
 	walkable bool
 }
 
-func (n *Node) getCoords() string {
+func (n *Node) getKey() string {
 	return fmt.Sprintf("%d-%d", n.x, n.y)
 }
 
@@ -33,19 +33,21 @@ func (n *Node) getLeftCoors() string {
 	return fmt.Sprintf("%d-%d", n.x-1, n.y)
 }
 
-func (n *Node) neighborCoorKeys(b *Board) []*Node {
+func (n *Node) neighborCoorKeys(board *Board) []*Node {
 	neighbors := []*Node{}
-	if n.y > 0 && b.coorsMap[n.getUpCoors()].walkable {
-		neighbors = append(neighbors, b.coorsMap[n.getUpCoors()])
+	if n.y > 0 && board.coorsMap[n.getUpCoors()].walkable {
+		neighbors = append(neighbors, board.coorsMap[n.getUpCoors()])
 	}
-	if n.x < b.WIDTH-1 && b.coorsMap[n.getRightCoors()].walkable {
-		neighbors = append(neighbors, b.coorsMap[n.getRightCoors()])
+	if n.x < board.WIDTH-1 && board.coorsMap[n.getRightCoors()].walkable {
+		neighbors = append(neighbors, board.coorsMap[n.getRightCoors()])
 	}
-	if n.y < b.HEIGHT-1 && b.coorsMap[n.getDownCoors()].walkable {
-		neighbors = append(neighbors, b.coorsMap[n.getDownCoors()])
+	if n.y < board.HEIGHT-1 && board.coorsMap[n.getDownCoors()].walkable {
+		neighbors = append(neighbors, board.coorsMap[n.getDownCoors()])
 	}
-	if n.x > 0 && b.coorsMap[n.getLeftCoors()].walkable {
-		neighbors = append(neighbors, b.coorsMap[n.getLeftCoors()])
+	fmt.Printf("%+v\n", *n)
+	fmt.Printf("LEFT COORDS %s", n.getLeftCoors())
+	if n.x > 0 && board.coorsMap[n.getLeftCoors()].walkable {
+		neighbors = append(neighbors, board.coorsMap[n.getLeftCoors()])
 	}
 
 	neighbors = slices.DeleteFunc(neighbors, func(n *Node) bool {
@@ -91,16 +93,16 @@ func (board *Board) Dijkstra(startKey string) (result *DjistraResult, err error)
 
 	for len(vertices) != 0 {
 		sort.SliceStable(vertices, func(i, j int) bool {
-			return distances[vertices[i].getCoords()] < distances[vertices[j].getCoords()]
+			return distances[vertices[i].getKey()] < distances[vertices[j].getKey()]
 		})
 
 		vertex := vertices[0]
 		vertices = vertices[1:]
 
 		for adjacent, cost := range vertex.edges {
-			alt := distances[vertex.getCoords()] + cost
-			if alt < distances[adjacent.getCoords()] {
-				distances[adjacent.getCoords()] = alt
+			alt := distances[vertex.getKey()] + cost
+			if alt < distances[adjacent.getKey()] {
+				distances[adjacent.getKey()] = alt
 				prevs[adjacent] = vertex
 			}
 		}

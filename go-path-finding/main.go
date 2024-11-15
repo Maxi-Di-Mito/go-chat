@@ -16,6 +16,8 @@ func main() {
 
 	board := createNodeStructure(file)
 
+	fmt.Printf("%+v\n", board.coorsMap)
+
 	result, err := board.Dijkstra("0-0")
 	if err != nil {
 		panic(err)
@@ -27,7 +29,7 @@ func main() {
 	path := board.getPath("2-2", result)
 
 	for _, p := range path {
-		fmt.Printf("%+v - ", p.getCoords())
+		fmt.Printf("%+v - ", p.getKey())
 	}
 
 }
