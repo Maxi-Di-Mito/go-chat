@@ -93,9 +93,9 @@ func createNodeStructure(file *os.File) *Board {
 	var nodeList []*Node
 	mapaCoors := make(map[string]*Node)
 
-	for x := -1; scanner.Scan(); x++ {
+	for yCoor := -1; scanner.Scan(); yCoor++ {
 		line := scanner.Text()
-		if x == -1 {
+		if yCoor == -1 {
 			parts := strings.Split(line, "x")
 			x, _ := strconv.ParseInt(parts[0], 10, 32)
 			y, _ := strconv.ParseInt(parts[1], 10, 32)
@@ -105,12 +105,12 @@ func createNodeStructure(file *os.File) *Board {
 		}
 		nodeTexts := strings.Split(line, " ")
 
-		for y, node := range nodeTexts {
+		for xCoor, node := range nodeTexts {
 			isWalkable, _ := strconv.ParseInt(node, 10, 32)
 
 			newNode := &Node{
-				x:        x,
-				y:        y,
+				x:        xCoor,
+				y:        yCoor,
 				cost:     1, //TODO hardcoded cost for the momment
 				walkable: isWalkable == 1,
 				edges:    make(map[*Node]int),
@@ -123,6 +123,7 @@ func createNodeStructure(file *os.File) *Board {
 	}
 
 	board.coorsMap = mapaCoors
+	fmt.Printf("%+v\n", mapaCoors)
 	for _, node := range nodeList {
 		nList := node.neighborCoorKeys(board)
 		for _, n := range nList {

@@ -36,6 +36,7 @@ func (n *Node) neighborCoorKeys(board *Board) []*Node {
 	if n.y > 0 && board.coorsMap[n.getUpCoors()].walkable {
 		neighbors = append(neighbors, board.coorsMap[n.getUpCoors()])
 	}
+	fmt.Printf("%+v\n", n)
 	if n.x < board.WIDTH-1 && board.coorsMap[n.getRightCoors()].walkable {
 		neighbors = append(neighbors, board.coorsMap[n.getRightCoors()])
 	}

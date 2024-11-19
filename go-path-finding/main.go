@@ -25,8 +25,8 @@ func main() {
 
 	fmt.Printf("DISTANCES:\n%+v\n", result.distances)
 
-	fmt.Println("Path to 2-2")
-	path := board.getPath("2-2", result)
+	fmt.Println("Path to 4-3")
+	path := board.getPath("4-3", result)
 
 	for _, p := range path {
 		fmt.Printf("%+v - ", p.getKey())
