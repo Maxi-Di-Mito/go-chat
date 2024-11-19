@@ -17,12 +17,12 @@ type Board struct {
 	HEIGHT   int
 }
 
-type DjistraResult struct {
+type DijkstraResult struct {
 	distances map[string]int
 	prevs     map[*Node]*Node
 }
 
-func (board *Board) Dijkstra(startKey string) (result *DjistraResult, err error) {
+func (board *Board) Dijkstra(startKey string) (result *DijkstraResult, err error) {
 	initial, ok := board.coorsMap[startKey]
 	if !ok {
 		return nil, fmt.Errorf("start vertex %v not found", startKey)
@@ -62,13 +62,13 @@ func (board *Board) Dijkstra(startKey string) (result *DjistraResult, err error)
 		}
 	}
 
-	result = &DjistraResult{
+	result = &DijkstraResult{
 		distances: distances, prevs: prevs}
 
 	return result, err
 }
 
-func (board *Board) getPath(key string, result *DjistraResult) []*Node {
+func (board *Board) getPath(key string, result *DijkstraResult) []*Node {
 	path := []*Node{}
 	target, ok := board.coorsMap[key]
 	if !ok {
