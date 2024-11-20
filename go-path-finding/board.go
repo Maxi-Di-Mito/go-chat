@@ -123,7 +123,6 @@ func createNodeStructure(file *os.File) *Board {
 	}
 
 	board.coorsMap = mapaCoors
-	fmt.Printf("%+v\n", mapaCoors)
 	for _, node := range nodeList {
 		nList := node.neighborCoorKeys(board)
 		for _, n := range nList {
