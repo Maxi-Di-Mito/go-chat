@@ -41,6 +41,10 @@ func inputer() {
 	}
 }
 
+func SendInput(in string) {
+	inputChannel <- in
+}
+
 func processInput(conn net.Conn) {
 	for {
 		input := <-inputChannel
