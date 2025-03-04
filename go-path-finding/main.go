@@ -1,31 +1,50 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"io"
+	"text/template"
+
+	"github.com/Maxi-Di-Mito/go-cli-game/entities"
+	"github.com/Maxi-Di-Mito/go-cli-game/routes"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
-var nodeList []*Node
+var nodeList []*entities.Node
+
+type Template struct {
+	Templates *template.Template
+}
+
+var Temps = &Template{
+	Templates: template.Must(template.ParseGlob("views/*.go.html")),
+}
+
+func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
+	return t.Templates.ExecuteTemplate(w, name, data)
+}
+
+var theGame *entities.Game
 
 func main() {
-	file, err := os.Open("map.txt")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
+	server := echo.New()
 
-	board := createNodeStructure(file)
+	server.Use(middleware.Logger())
+	server.Static("/static", "static")
+	server.Renderer = Temps
 
-	result, err := board.Dijkstra("0-0")
-	if err != nil {
-		panic(err)
-	}
+	server.GET("/", routes.HomeHandler)
 
-	fmt.Println("Path to 4-3")
-	path := board.getPath("4-3", result)
+	server.GET("/api/getMap", routes.GetMapHandlerMaker(theGame))
 
-	for _, p := range path {
-		fmt.Printf("%+v - ", p.getKey())
-	}
+	// server.POST("/click")
+
+	// theGame := startGame()
+	// path := theGame.getPath("0-0", "4-3")
+	// for _, node := range path {
+	// 	fmt.Printf("%d-%d\n", node.x, node.y)
+	// }
+
+	server.Start(":1234")
 
 }

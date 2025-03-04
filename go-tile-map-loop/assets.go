@@ -42,7 +42,7 @@ func renderMap(game *game) {
 
 	mapa[game.player.y][game.player.x] = byte(game.player.char)
 
-	fmt.Fprintf("%+v", *game)
+	fmt.Printf("%+v\n", game)
 
 	for r := 0; r < WIDTH; r++ {
 		if r == game.player.y {
