@@ -111,19 +111,19 @@ func createNodeStructure(file *os.File) *Board {
 	var nodeList []*Node
 	mapaCoors := make(map[string]*Node)
 
-	for yCoor := -1; scanner.Scan(); yCoor++ {
+	for xCoor := -1; scanner.Scan(); xCoor++ {
 		line := scanner.Text()
-		if yCoor == -1 {
+		if xCoor == -1 {
 			parts := strings.Split(line, "x")
 			x, _ := strconv.ParseInt(parts[0], 10, 32)
 			y, _ := strconv.ParseInt(parts[1], 10, 32)
-			board.WIDTH = int(x)
-			board.HEIGHT = int(y)
+			board.WIDTH = int(y)
+			board.HEIGHT = int(x)
 			continue
 		}
 		nodeTexts := strings.Split(line, " ")
 
-		for xCoor, node := range nodeTexts {
+		for yCoor, node := range nodeTexts {
 			isWalkable, _ := strconv.ParseInt(node, 10, 32)
 
 			newNode := &Node{

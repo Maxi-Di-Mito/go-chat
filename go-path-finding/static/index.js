@@ -1,5 +1,8 @@
 document.addEventListener('alpine:init', () => {
-  Alpine.store('main', {
+  Alpine.data('context', () => ({
+    init() {
+      this.getMap();
+    },
     loading: false,
     map: null,
     getMap() {
@@ -10,6 +13,5 @@ document.addEventListener('alpine:init', () => {
       })
     },
 
-  })
+  }))
 })
-

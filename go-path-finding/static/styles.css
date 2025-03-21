@@ -1,0 +1,21 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: repeat(var(--rows), 1fr);
+  place-content: center;
+  place-items: center;
+  height: 80vh;
+  width: 80vw;
+  border: 2px solid red;
+  gap: 2px;
+  background-color: lightblue;
+}
+
+.board .cell {
+  height: calc(80vh / var(--rows));
+  width: calc(80vw / var(--columns));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
