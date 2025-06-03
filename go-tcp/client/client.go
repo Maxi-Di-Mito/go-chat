@@ -14,7 +14,7 @@ var group sync.WaitGroup
 var inputChannel chan string
 var toPrint chan string
 
-func StartClient() {
+func StartClient(userName string) {
 	conn, err := net.Dial("tcp", ":8080")
 	if err != nil {
 		panic(err)
@@ -29,6 +29,9 @@ func StartClient() {
 
 	go inputer()
 	go processInput(conn)
+
+	// server expects first message to be the name
+	SendInput(fmt.Sprintf("CONNECT:%s", userName))
 
 	group.Wait()
 }
@@ -49,26 +52,37 @@ func processInput(conn net.Conn) {
 	for {
 		input := <-inputChannel
 		if inputIsAction(input) {
-			makeAction(input)
+			go makeAction(input)
 		} else {
 			conn.Write([]byte(input))
 		}
 	}
 }
 
+var actions = []string{"EXIT", "CONNECT"}
+
 func inputIsAction(input string) bool {
-	if input == "EXIT" {
-		return true
+	for _, action := range actions {
+		if strings.Contains(input, action) {
+			return true
+		}
 	}
 	return false
 }
 
 func makeAction(action string) {
 	toPrint <- fmt.Sprintf("Executing action: %s", action)
-	if action == "EXIT" {
+	actionData := strings.Split(action, ":")
+	fmt.Println("actionData", actionData)
+	switch actionData[0] {
+	case "EXIT":
 		close(toPrint)
 		close(inputChannel)
 		group.Done()
+
+	case "CONNECT":
+		toPrint <- action
+		SendInput(actionData[1])
 	}
 }
 

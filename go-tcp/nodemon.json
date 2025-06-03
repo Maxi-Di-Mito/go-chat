@@ -1,0 +1,15 @@
+{
+  "ignore": [
+    ".git"
+  ],
+  "verbose": true,
+  "exec": "go run .",
+  "signal": "SIGTERM",
+  "watch": [
+    "./"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "go,go.html"
+}

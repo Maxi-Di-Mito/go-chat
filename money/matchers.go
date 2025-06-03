@@ -41,6 +41,7 @@ var matchersKeys map[string]string = map[string]string{
 	"SUPERDIA":         "DIA",
 	"PERSONAL":         "INTERNET/CEL",
 	"FARMA":            "FARMACIA",
+	"FABRIC":           "SUSHI",
 }
 
 var categories map[string]string = map[string]string{
@@ -48,6 +49,7 @@ var categories map[string]string = map[string]string{
 	"KFC":          "FAST FOOD",
 	"Mostaza":      "FAST FOOD",
 	"BURGER":       "FAST FOOD",
+	"SUSHI":        "FAST FOOD",
 	"LUZ":          "Servicios",
 	"GAS":          "Servicios",
 	"INTERNET/CEL": "Servicios",
@@ -60,12 +62,14 @@ var categories map[string]string = map[string]string{
 	"PEDIDOSYA":    "DELIVERY",
 }
 
+var cuotasRegexp = regexp.MustCompile(`\d\d/\d\d`)
+
 func matchKey(line string) string {
 	for key, value := range matchersKeys {
 		if strings.Contains(line, key) {
 			return value
 		}
-		if match, _ := regexp.MatchString("\\d\\d/\\d\\d", line); match {
+		if cuotasRegexp.MatchString(line) {
 			return "CUOTAS"
 		}
 	}

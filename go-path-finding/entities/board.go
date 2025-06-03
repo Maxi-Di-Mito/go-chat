@@ -131,6 +131,7 @@ func createNodeStructure(file *os.File) *Board {
 				y:        yCoor,
 				cost:     1, //TODO hardcoded cost for the momment
 				walkable: isWalkable == 1,
+				state:    "normal",
 				edges:    make(map[*Node]int),
 			}
 

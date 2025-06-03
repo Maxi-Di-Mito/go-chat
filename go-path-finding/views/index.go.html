@@ -15,11 +15,11 @@
     <template x-if="loading">
       <span>loading</span>
     </template>
-    <template x-if="map">
+    <template x-if="map && !loading">
       <div class="board" :style="`--columns: ${map[0].length};--rows: ${map.length}`">
         <template x-for="(row,rowIdx) in map">
           <template x-for="(cell,cellIdx) in row">
-            <div class="cell" :class="{'walkable': !!Number(cell)}" x-text="`${rowIdx}-${cellIdx}:${cell}`"></div>
+            <div class="cell" :class="{'walkable': !!Number(cell)}" x-text="`${rowIdx}-${cellIdx}:${cell}`" @click="clickCell(rowIdx,cellIdx)"></div>
           </template>
         </template>
       </div>

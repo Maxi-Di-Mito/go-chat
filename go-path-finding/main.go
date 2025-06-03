@@ -35,9 +35,9 @@ func main() {
 
 	server.GET("/", routes.HomeHandler)
 
-	server.GET("/api/getMap", routes.GetMapHandlerMaker(theGame))
+	server.GET("/api/getMap", routes.GetMapHandlerMaker(&theGame))
 
-	// server.POST("/click")
+	server.POST("/api/click", routes.ClickHandlerMaker(&theGame))
 
 	// theGame := startGame()
 	// path := theGame.getPath("0-0", "4-3")

@@ -12,32 +12,52 @@ func HomeHandler(ctx echo.Context) error {
 	return ctx.Render(http.StatusOK, "index", nil)
 }
 
-func GetMapHandlerMaker(game *entities.Game) func(echo.Context) error {
+func GetMapHandlerMaker(game **entities.Game) func(echo.Context) error {
 	return func(ctx echo.Context) error {
-		if game == nil {
-			game = entities.StartGame()
+		if *game == nil {
+			*game = entities.StartGame()
 		}
 
 		ctx.Response().Header().Set("Content-Type", "application/json")
 
-		return ctx.JSON(http.StatusOK, game.Board.ToArray())
+		return ctx.JSON(http.StatusOK, (*game).Board.ToArray())
 	}
 }
 
-func ClickHandlerMaker(game *entities.Game) func(echo.Context) error {
+func ClickHandlerMaker(game **entities.Game) func(echo.Context) error {
 	return func(ctx echo.Context) error {
-		x := ctx.QueryParam("X")
-		y := ctx.QueryParam("Y")
+		// access request body params
+		var body struct {
+			X int `json:"x"`
+			Y int `json:"y"`
+		}
+		if err := ctx.Bind(&body); err != nil {
+			return ctx.String(http.StatusBadRequest, "Invalid request")
+		}
 
-		coor := fmt.Sprintf("%s-%s", x, y)
+		x := body.X
+		y := body.Y
 
-		if game.Start != "" {
-			game.Target = coor
-			game.GetPath(game.Start, game.Target)
-			return ctx.String(http.StatusOK, coor)
+		coor := fmt.Sprintf("%d-%d", x, y)
+		if game == nil {
+			fmt.Println("Game is nil")
+		}
+
+		var response struct {
+			Next string `json:"next"`
+			Coor string `json:"coor"`
+		}
+		response.Coor = coor
+
+		if (*game).Start != "" {
+			(*game).Target = coor
+			(*game).GetPath((*game).Start, (*game).Target)
+			response.Next = "path"
+			return ctx.JSON(http.StatusOK, response)
 		} else {
-			game.Start = coor
-			return ctx.String(http.StatusOK, coor)
+			(*game).Start = coor
+			response.Next = "target"
+			return ctx.JSON(http.StatusOK, response)
 		}
 
 	}

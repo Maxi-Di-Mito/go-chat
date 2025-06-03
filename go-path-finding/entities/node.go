@@ -6,12 +6,12 @@ import (
 )
 
 type Node struct {
-	key      string
 	x        int
 	y        int
 	cost     int
 	edges    map[*Node]int
 	walkable bool
+	state    string
 }
 
 func (n *Node) getKey() string {

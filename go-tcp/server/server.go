@@ -48,13 +48,14 @@ func clientLoop(client *Client) {
 			fmt.Println("ERROR WITH CLIENT", err)
 			break
 		}
-		fmt.Println("THE IN", in, "\n the N", n)
-		cutted := in[:n]
-		fmt.Println("CUTTED", cutted)
 		msg := strings.TrimSpace(string(in[:n]))
-		fmt.Println("MSG ", msg)
-
-		broadCastChannel <- fmt.Sprintf("%s :\n%s", client.id, msg)
+		fmt.Println("MSG", msg)
+		if client.name == "" {
+			client.name = msg
+			broadCastChannel <- fmt.Sprintf("%s has joined the chat", client.name)
+		} else {
+			broadCastChannel <- fmt.Sprintf("%s | %s :\n%s", client.name, client.id, msg)
+		}
 	}
 }
 
