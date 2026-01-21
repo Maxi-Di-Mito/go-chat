@@ -14,6 +14,7 @@ type Item struct {
 	category   string
 	percentaje int
 	bar        string
+	who        string
 }
 
 func loadFile(fileName string) (map[string]*Item, map[string]int, int, int) {
@@ -30,10 +31,15 @@ func loadFile(fileName string) (map[string]*Item, map[string]int, int, int) {
 
 	scanner := bufio.NewScanner(file)
 
+	who := "Maxi"
+
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if matchIgnore(line) {
+		if igText, match := matchIgnore(line); match {
+			if igText == "Consumos Tarjeta:4824690004612580" {
+				who = "Cele"
+			}
 			continue
 		}
 
@@ -47,8 +53,8 @@ func loadFile(fileName string) (map[string]*Item, map[string]int, int, int) {
 			continue
 		}
 
-		key := matchKey(name)
-		cat := matchCategory(key)
+		key := matchKey(name, who)
+		cat := matchCategory(strings.Replace(key, " - "+who, "", 1))
 
 		_, ok := moneyMap[key]
 		if !ok {
@@ -56,6 +62,7 @@ func loadFile(fileName string) (map[string]*Item, map[string]int, int, int) {
 				name:     key,
 				amount:   amount,
 				category: cat,
+				who:      who,
 			}
 		} else {
 			moneyMap[key].amount += amount

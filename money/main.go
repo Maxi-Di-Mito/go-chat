@@ -24,7 +24,7 @@ func main() {
 	ac := accounting.Accounting{Symbol: "$", Precision: 0, Thousand: ".", Decimal: ","}
 
 	for _, row := range items {
-		fmt.Printf("%s : %s  --  %d%% ||| %s\n", padName(row.name, padMax), ac.FormatMoney(row.amount), row.percentaje, row.bar)
+		fmt.Printf("%s : %s  --  %d%% ||| %s  : %s\n", padName(row.name, padMax), ac.FormatMoney(row.amount), row.percentaje, row.bar, row.who)
 	}
 	fmt.Println()
 	fmt.Println("TOTAL: ", ac.FormatMoney(total))

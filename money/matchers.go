@@ -7,13 +7,13 @@ import (
 
 var ignores []string = []string{"Fecha", "Consumos", "Tarjeta:", "BONIF", "SU PAGO"}
 
-func matchIgnore(line string) bool {
+func matchIgnore(line string) (string, bool) {
 	for _, ig := range ignores {
 		if strings.Contains(line, ig) {
-			return true
+			return line, true
 		}
 	}
-	return false
+	return "", false
 }
 
 var matchersKeys map[string]string = map[string]string{
@@ -28,12 +28,16 @@ var matchersKeys map[string]string = map[string]string{
 	"KFC":              "KFC",
 	"MOSTAZA":          "Mostaza",
 	"BURGERKING":       "BURGER",
+	"BK ":              "BURGER",
+	"CHICKENFRIES":     "BURGER",
+	"SENSU":            "SUSHI",
 	"INST PEDRO GIACH": "COLEGIO",
 	"ESUR":             "LUZ",
 	"MTGA":             "GAS",
 	"CHANGO":           "Changomas",
 	"HOYTS":            "HOYTS",
 	"SHOWCASE":         "SHOWCASE",
+	"CINEMARK":         "CINEMARK",
 	"UBER":             "UBER",
 	"YPF":              "YPF",
 	"LIAN":             "CHINO",
@@ -41,7 +45,7 @@ var matchersKeys map[string]string = map[string]string{
 	"SUPERDIA":         "DIA",
 	"PERSONAL":         "INTERNET/CEL",
 	"FARMA":            "FARMACIA",
-	"FABRIC":           "SUSHI",
+	"FABRIC":           "DELIVERY",
 }
 
 var categories map[string]string = map[string]string{
@@ -59,21 +63,22 @@ var categories map[string]string = map[string]string{
 	"DIA":          "Supermercado",
 	"HOYTS":        "CINE",
 	"SHOWCASE":     "CINE",
+	"CINEMARK":     "CINE",
 	"PEDIDOSYA":    "DELIVERY",
 }
 
 var cuotasRegexp = regexp.MustCompile(`\d\d/\d\d`)
 
-func matchKey(line string) string {
+func matchKey(line string, who string) string {
 	for key, value := range matchersKeys {
 		if strings.Contains(line, key) {
-			return value
+			return value + " - " + who
 		}
 		if cuotasRegexp.MatchString(line) {
-			return "CUOTAS"
+			return "CUOTAS" + " - " + who
 		}
 	}
-	return line
+	return line + " - " + who
 }
 
 func matchCategory(name string) string {

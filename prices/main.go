@@ -48,16 +48,9 @@ func CreateHandler(ctx echo.Context) error {
 }
 
 func main() {
-	InitDB()
-	defer DB.Close()
+	// server := echo.New()
+	// server.Use(middleware.Logger())
+	// server.Static("/static", "static")
+	// server.Renderer = Temps
 
-	server := echo.New()
-	server.Use(middleware.Logger())
-	server.Static("/static", "static")
-	server.Renderer = Temps
-
-	server.GET("/", HomeHandler)
-	server.POST("/create", HomeHandler)
-
-	server.Start(":1234")
 }
