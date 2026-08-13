@@ -12,7 +12,7 @@ type Item struct {
 	name       string
 	amount     int
 	category   string
-	percentaje int
+	percentaje float64
 	bar        string
 	who        string
 }
@@ -84,8 +84,8 @@ func loadFile(fileName string) (map[string]*Item, map[string]int, int, int) {
 	var maxname int
 
 	for _, row := range moneyMap {
-		row.percentaje = int(100.0 / float64(total) * float64(row.amount))
-		row.bar = strings.Repeat("=", row.percentaje) + ">"
+		row.percentaje = 100.0 / float64(total) * float64(row.amount)
+		row.bar = strings.Repeat("=", max(int(row.percentaje), 0)) + ">"
 		if len(row.name) > maxname {
 			maxname = len(row.name)
 		}
@@ -102,8 +102,8 @@ func parseAmount(str string) int {
 	return int(value)
 }
 
-func padName(name string, target int) string {
-	spaces := target - len(name)
+func padRight(str string, target int) string {
+	spaces := target - len(str)
 
-	return fmt.Sprintf("%s%s", name, strings.Repeat(" ", spaces))
+	return fmt.Sprintf("%s%s", str, strings.Repeat(" ", spaces))
 }

@@ -17,6 +17,7 @@ func matchIgnore(line string) (string, bool) {
 }
 
 var matchersKeys map[string]string = map[string]string{
+	"PLAN V":           "PLAN V",
 	"SWISS":            "Swiss",
 	"PEDIDOS":          "PEDIDOSYA",
 	"Microsoft":        "XBOX",
@@ -33,7 +34,7 @@ var matchersKeys map[string]string = map[string]string{
 	"SENSU":            "SUSHI",
 	"INST PEDRO GIACH": "COLEGIO",
 	"ESUR":             "LUZ",
-	"MTGA":             "GAS",
+	"METROGAS":         "GAS",
 	"CHANGO":           "Changomas",
 	"HOYTS":            "HOYTS",
 	"SHOWCASE":         "SHOWCASE",
@@ -72,13 +73,13 @@ var cuotasRegexp = regexp.MustCompile(`\d\d/\d\d`)
 func matchKey(line string, who string) string {
 	for key, value := range matchersKeys {
 		if strings.Contains(line, key) {
-			return value + " - " + who
-		}
-		if cuotasRegexp.MatchString(line) {
-			return "CUOTAS" + " - " + who
+			return who + " - " + value
 		}
 	}
-	return line + " - " + who
+	if cuotasRegexp.MatchString(line) {
+		return who + " - " + "CUOTAS"
+	}
+	return who + " - " + line
 }
 
 func matchCategory(name string) string {
