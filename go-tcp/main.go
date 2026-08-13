@@ -18,13 +18,14 @@ func main() {
 		userName = os.Args[2]
 	}
 
-	if mode == "server" {
+	switch mode {
+	case "server":
 		fmt.Println("Starting server")
 		server.StartServer()
-	} else if mode == "client" {
+	case "client":
 		fmt.Println("Starting client")
 		client.StartClient(userName)
-	} else {
+	default:
 		fmt.Println("Wrong param")
 	}
 }
